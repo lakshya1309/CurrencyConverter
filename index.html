@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter - Convert your currency</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+        nav {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: 1000;
+            display: flex;
+            font-size: 21px;
+            background-color: #103005;
+            padding: 15px;
+            
+        }
+
+        nav li a {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            text-decoration: none ;
+            color: rgb(249, 251, 253);
+            transition: all;
+            transition-duration: 400ms;
+            text-align: center;
+        }
+
+        nav li a:hover {
+            text-decoration: none;
+            color: rgb(105, 100, 102);
+        }
+
+        div.logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 23px;
+            color: aliceblue;
+        }
+
+        nav ul li {
+            list-style: none;
+            margin: 0 23px;
+        }
+
+        nav ul {
+            display: flex;
+            margin-left: auto;
+        }
+
+        .container {
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: rgb(255, 255, 255);
+            max-width: 80vw;
+            margin: auto;
+        }
+
+        .container h1,
+        h2 {
+            text-align: left;
+            margin: 23px 0;
+        }
+
+        .container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container form label {
+            font-size: 25px;
+        }
+
+        .container form input[type='number'],
+        select,
+        label {
+            font-size: 25px;
+            width: 23vw;
+            margin-bottom: 23px;
+        }
+
+        .btn {
+            width: 144px;
+            padding: 5px 8px;
+            font-size: 23px;
+            background: rgb(15, 15, 19);
+            color: white;
+            border-radius: 13px;
+            cursor: pointer;
+        }
+        .btn:hover{
+            background-color: #444141;
+        }
+
+        .output {
+            display: none;
+        }
+
+        .output table {
+            width: 50vw;
+            text-align: center;
+            border: 2px solid black;
+            font-size: 20px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                background-color:rgb(255, 251, 251);
+            }
+
+            nav {
+                flex-direction: column;
+                font-size: 14px;
+            }
+
+            nav ul li {
+                margin: 5px 13px;
+            }
+
+            nav ul {
+                justify-content: center;
+            }
+
+            .container {
+                max-width: 95vw;
+            }
+
+            .container form input[type='number'],
+            select,
+            label {
+                font-size: 25px;
+                width: 80vw;
+            }
+        }
+
+        footer {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">Currency Converter</div>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h1>Choose a currency to convert</h1>
+        <form action="/action.php" method="get">
+            <label for="quantity">Choose a quantity:</label>
+            <input type="number" name="quantity" min="1" max="10">
+            <label for="currency">Choose a currency:</label>
+            <select name="currency">
+                <option value="INR">Indian Rupee</option>
+                <option value="USD">Dollar</option>
+                <option value="EUR">Euro</option>
+            </select>
+            <button class="btn" type="submit">Submit</button>
+
+            <div class="output">
+                <h2>Here are your converted values in different currencies</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Currency</th>
+                            <th>Currency Code</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <footer>
+        Copyright &copy; All rights reserved
+    </footer>
+    <script>
+        console.log("Main.js working");
+
+        const populate = async (value, currency) => {
+            let myStr = "";
+            const url = `https://api.currencyapi.com/v3/latest?apikey=cur_live_VR5QUq1QZzNo0CZQKeHfGIn8xwq51tMGLSFw9M0Z&base_currency=${currency}`;
+            try {
+                let response = await fetch(url);
+                let rJson = await response.json();
+                console.log(rJson);
+
+                for (let key in rJson["data"]) {
+                    myStr += `
+                        <tr>
+                            <td>${key}</td>
+                            <td>${rJson["data"][key]["code"]}</td>
+                            <td>${(rJson["data"][key]["value"] * value).toFixed(2)}</td>
+                        </tr>
+                        `;
+                }
+
+                const tableBody = document.querySelector("tbody");
+                tableBody.innerHTML = myStr;
+                document.querySelector(".output").style.display = "block";
+            } catch (error) {
+                console.error("Error fetching the currency data: ", error);
+            }
+        };
+
+        const btn = document.querySelector(".btn");
+        btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            console.log("button is clicked");
+
+            const value = parseInt(document.querySelector("input[name='quantity']").value);
+            const currency = document.querySelector("select[name='currency']").value;
+
+            await populate(value, currency);
+        });
+    </script>
+</body>
+
+</html>
